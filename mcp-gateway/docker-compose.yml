@@ -1,0 +1,30 @@
+services:
+  mcp-gateway:
+    build: .
+    container_name: mcp-gateway
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      - PORT=8086
+      - SERVER_NAME=mcp-gateway
+      - SSH_SERVERS=vps1,vps2
+      - SSH_VPS1_HOST=${SSH_VPS1_HOST}
+      - SSH_VPS1_USER=${SSH_VPS1_USER:-root}
+      - SSH_VPS1_KEY=/ssh/id_ed25519
+      - SSH_VPS2_HOST=${SSH_VPS2_HOST}
+      - SSH_VPS2_USER=${SSH_VPS2_USER:-root}
+      - SSH_VPS2_KEY=/ssh/id_ed25519
+    volumes:
+      - ${SSH_KEY_PATH:-/root/.ssh}:/ssh:ro
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mcp-network:
+    external: true

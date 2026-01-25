@@ -1,0 +1,19 @@
+services:
+  mcp-name-bridge:
+    build: .
+    container_name: mcp-name-bridge
+    restart: unless-stopped
+    environment:
+      - UPSTREAM_URL=http://contextforge:4444
+      - PORT=8080
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mcp-network:
+    external: true

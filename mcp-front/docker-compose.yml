@@ -1,0 +1,28 @@
+services:
+  mcp-front:
+    image: dgellow/mcp-front:latest
+    container_name: mcp-front
+    restart: unless-stopped
+    environment:
+      - MCP_FRONT_ENV=development
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./data:/app/data
+    ports:
+      - "8088:8080"
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/.well-known/oauth-authorization-server"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  mcp-network:
+    external: true

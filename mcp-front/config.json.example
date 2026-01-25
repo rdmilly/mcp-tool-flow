@@ -1,0 +1,27 @@
+{
+  "version": "v0.0.1-DEV_EDITION_EXPECT_CHANGES",
+  "proxy": {
+    "baseURL": "https://mcp.yourdomain.com",
+    "addr": ":8080",
+    "name": "MCP Gateway",
+    "auth": {
+      "kind": "oauth",
+      "issuer": "https://mcp.yourdomain.com",
+      "allowedDomains": ["gmail.com", "yourdomain.com"],
+      "allowedOrigins": ["https://claude.ai", "capacitor://localhost"],
+      "tokenTtl": "168h",
+      "storage": "memory",
+      "googleClientId": {"$env": "GOOGLE_CLIENT_ID"},
+      "googleClientSecret": {"$env": "GOOGLE_CLIENT_SECRET"},
+      "googleRedirectUri": "https://mcp.yourdomain.com/oauth/callback",
+      "jwtSecret": {"$env": "JWT_SECRET"},
+      "encryptionKey": {"$env": "ENCRYPTION_KEY"}
+    }
+  },
+  "mcpServers": {
+    "mcp": {
+      "transportType": "streamable-http",
+      "url": "http://mcp-tool-filter-cf:8080/mcp"
+    }
+  }
+}

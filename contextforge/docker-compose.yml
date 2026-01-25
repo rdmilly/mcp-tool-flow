@@ -1,0 +1,47 @@
+services:
+  contextforge:
+    image: ghcr.io/ibm/mcp-context-forge:latest
+    container_name: contextforge
+    restart: unless-stopped
+    ports:
+      - "4444:4444"
+      - "8099:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=4444
+      - MCPGATEWAY_ADMIN_API_ENABLED=true
+      - MCPGATEWAY_UI_ENABLED=true
+      - AUTH_REQUIRED=false
+      - DOCS_ALLOW_BASIC_AUTH=true
+      - BASIC_AUTH_USER=admin
+      - BASIC_AUTH_PASSWORD=${CONTEXTFORGE_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET}
+      - AUTH_ENCRYPTION_SECRET=${ENCRYPTION_KEY}
+      - CORS_ORIGINS=*
+      - LOG_LEVEL=INFO
+      - DEBUG=false
+      - FEDERATION_ENABLED=false
+      - DATABASE_URL=sqlite:////app/app/data/mcp.db
+      - GUNICORN_WORKERS=2
+      - WEB_CONCURRENCY=2
+    volumes:
+      - contextforge-data:/app/app/data
+    networks:
+      - mcp-network
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '1.5'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4444/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  contextforge-data:
+
+networks:
+  mcp-network:
+    external: true
